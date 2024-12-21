@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <title>Maquina de Turing</title>
+  </head>
+
+  <body class="h-screen p-4 bg-slate-200 ml-5 mr-5">
+    <div class="flex flex-col">
+      <div class="flex items-center justify-between">
+        <div class="inline-flex gap-4 flex-col w-48">
+          <button
+            class="rounded-lg text-lg bg-blue-900 text-white hover:bg-blue-700 transition w-full h-10 font-bold inline-block"
+            type="submit"
+            title="Este boton reinicia toda la configuracion de la maquina, tanto los estados, los simbolos y las transiciones"
+            id="reiniciarTuring"
+            onclick="reiniciar()"
+          >
+            Reiniciar Máquina
+          </button>
+
+          <button
+            class="rounded-lg text-lg bg-blue-900 text-white hover:bg-blue-700 transition inline-block font-bold h-10"
+            type="submit"
+            id="btnGrafo"
+            title="Este boton muestra el grafo de la maquina"
+          >
+            Ver Grafo
+          </button>
+          <button
+            class="rounded-lg text-lg bg-blue-900 text-white hover:bg-blue-700 transition w-full h-10 font-bold"
+            type="submit"
+            title="Como insertar transiciones en la maquina de turing"
+          >
+            <a href="#instrucciones">Instrucciones</a>
+          </button>
+        </div>
+        <div class="w-full">
+          <h1 class="text-4xl text-blue-900 font-bold text-center">
+            MÁQUINA DE TURING
+          </h1>
+        </div>
+      </div>
+      <div
+        class="bg-blue-200 rounded-md shadow-md flex flex-col justify-center items-center mt-10"
+        id="cinta"
+      >
+        <!-- Contenedor de la cinta -->
+      </div>
+      <div class="flex mt-20 flex-row gap-4 mb-4" id="transicionesControles">
+        <div class="text-3xl text-center text-blue-900 w-2/4 font-bold">
+          TRANSICIONES
+        </div>
+        <h1 class="text-3xl text-center text-blue-900 w-2/4 font-bold">
+          CONTROLES
+        </h1>
+      </div>
+
+      <div class="flex flex-row gap-4 mb-10" id="transicionesContainer">
+        <div class="w-2/4 ml-4">
+          <div
+            class="w-11/12 bg-blue-200 pt-10 pl-16 pr-16 pb-6 rounded-3xl shadow-lg"
+          >
+            <textarea
+              class="w-full border-2 border-blue-400 focus:border-blue-600 rounded-sm p-4 text-xl bg-white outline-none h-60"
+              title="transiciones"
+              id="transiciones"
+              placeholder="Ejemplo de transiciones:&#10;q0 1 3 R q1&#10;q0 0 2 R q1&#10;q1 1 3 R q0&#10;q1 0 2 R q0&#10;q0 _ _ N qf"
+            ></textarea>
+            <div class="flex justify-center mt-2 gap-10">
+              <button
+                class="rounded-lg bg-blue-900 text-white hover:bg-blue-700 transition p-2 w-1/4 shadow-2xl font-bold"
+                type="submit"
+                onclick="setTransiciones()"
+              >
+                Cargar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contenedor del estado de aceptacion -->
+        <div class="w-2/4 flex flex-row justify-center items-center mb-8 gap-6">
+          <div class="bg-blue-200 p-6 rounded-3xl w-3/5 mb-4 shadow-lg">
+            <div class="w-full">
+              <div class="text-xl flex flex-col gap-8">
+                <div>
+                  <label for="cadena" class="text-blue-900 font-bold"
+                    >CADENA INICIAL</label
+                  >
+                  <input
+                    type="text"
+                    id="cadena"
+                    class="mt-2 mb-4 w-full border-2 border-blue-400 focus:border-blue-600 rounded-md outline-none p-2 bg-white"
+                    placeholder="Ejemplo: 10101010"
+                  />
+                </div>
+              </div>
+              <h1 class="text-2xl text-center text-blue-900 font-bold">
+                ESTADOS
+              </h1>
+              <div class="flex flex-row justify-center items-center gap-4">
+                <div class="text-xl flex flex-col gap-8">
+                  <div>
+                    <label
+                      for="aceptado"
+                      class="text-blue-900 font-bold text-sm"
+                      >ACEPTACION</label
+                    >
+                    <input
+                      type="text"
+                      id="aceptado"
+                      class="mt-2 mb-4 w-full border-2 border-blue-400 focus:border-blue-600 rounded-md outline-none p-2 bg-white"
+                      placeholder="Ej: qf"
+                    />
+                  </div>
+                </div>
+                <div class="text-xl flex flex-col gap-8">
+                  <div>
+                    <label for="rechazo" class="text-blue-900 font-bold text-sm"
+                      >RECHAZO</label
+                    >
+                    <input
+                      type="text"
+                      id="rechazo"
+                      class="mt-2 mb-4 w-full border-2 border-blue-400 focus:border-blue-600 rounded-md outline-none p-2 bg-white"
+                      placeholder="Ej: qr"
+                    />
+                  </div>
+                </div>
+                <div class="text-xl flex flex-col gap-8">
+                  <div>
+                    <label for="inicial" class="text-blue-900 font-bold text-sm"
+                      >INICIAL</label
+                    >
+                    <input
+                      type="text"
+                      id="inicial"
+                      class="mt-2 mb-4 w-full border-2 border-blue-400 focus:border-blue-600 rounded-md outline-none p-2 bg-white"
+                      placeholder="Ej: q0"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="mt-4 flex justify-center gap-4">
+                <button
+                  class="rounded-lg bg-blue-900 text-white hover:bg-blue-700 transition p-2 w-full font-bold"
+                  type="submit"
+                  onclick="setCinta(); setAceptado(); setRechazado(); setInicial()"
+                >
+                  Cargar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="graph"
+      class="h-screen w-full m-4 flex justify-center items-center mt-20"
+    >
+      <div
+        id="cy"
+        class="w-10/12 h-screen bg-white shadow-2xl rounded-xl"
+      ></div>
+    </div>
+    <div class="h-[2000px] w-full mt-20 flex justify-center items-center">
+      <div
+        class="w-[95%] h-full bg-white shadow-2xl rounded-xl p-10 font-medium text-base leading-relaxed"
+      >
+        <!-- Título principal -->
+        <h1
+          class="text-4xl text-center text-blue-900 font-bold mb-8"
+          id="instrucciones"
+        >
+          ¿CÓMO INGRESAR TRANSICIONES?
+        </h1>
+
+        <!-- Instrucciones generales -->
+        <p class="mb-6">
+          En la sección de transiciones se debe ingresar la transición en el
+          siguiente formato:
+        </p>
+        <div
+          class="bg-blue-100 border-l-4 border-blue-500 text-blue-900 p-4 mb-8"
+        >
+          <b
+            >Estado Actual - Símbolo Leído - Símbolo Cambiado - Dirección -
+            Estado Destino</b
+          >
+        </div>
+
+        <p>Por ejemplo:</p>
+
+        <!-- Ejemplos de transiciones -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+          <div class="bg-gray-100 p-4 rounded-lg shadow">
+            <b>q0 1 3 R q1</b>
+            <ul class="mt-2 ml-4 list-disc">
+              <li><b>q0</b>: Estado actual.</li>
+              <li><b>1</b>: Símbolo leído.</li>
+              <li><b>3</b>: Símbolo cambiado.</li>
+              <li><b>R</b>: Dirección.</li>
+              <li><b>q1</b>: Estado destino.</li>
+            </ul>
+          </div>
+          <div class="bg-gray-100 p-4 rounded-lg shadow">
+            <b>q0 0 2 R q1</b>
+            <ul class="mt-2 ml-4 list-disc">
+              <li><b>q0</b>: Estado actual.</li>
+              <li><b>0</b>: Símbolo leído.</li>
+              <li><b>2</b>: Símbolo cambiado.</li>
+              <li><b>R</b>: Dirección.</li>
+              <li><b>q1</b>: Estado destino.</li>
+            </ul>
+          </div>
+          <div class="bg-gray-100 p-4 rounded-lg shadow">
+            <b>q1 1 3 R q0</b>
+            <ul class="mt-2 ml-4 list-disc">
+              <li><b>q1</b>: Estado actual.</li>
+              <li><b>1</b>: Símbolo leído.</li>
+              <li><b>3</b>: Símbolo cambiado.</li>
+              <li><b>R</b>: Dirección.</li>
+              <li><b>q0</b>: Estado destino.</li>
+            </ul>
+          </div>
+          <div class="bg-gray-100 p-4 rounded-lg shadow">
+            <b>q1 0 2 R q0</b>
+            <ul class="mt-2 ml-4 list-disc">
+              <li><b>q1</b>: Estado actual.</li>
+              <li><b>0</b>: Símbolo leído.</li>
+              <li><b>2</b>: Símbolo cambiado.</li>
+              <li><b>R</b>: Dirección.</li>
+              <li><b>q0</b>: Estado destino.</li>
+            </ul>
+          </div>
+          <div class="bg-gray-100 p-4 rounded-lg shadow">
+            <b>q0 _ _ N qf</b>
+            <ul class="mt-2 ml-4 list-disc">
+              <li><b>q0</b>: Estado actual.</li>
+              <li><b>_</b>: Símbolo leído.</li>
+              <li><b>_</b>: Símbolo cambiado.</li>
+              <li><b>N</b>: Dirección.</li>
+              <li><b>qf</b>: Estado destino.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Notas adicionales -->
+        <div
+          class="mt-8 p-4 bg-yellow-50 border-l-4 border-yellow-500 text-yellow-900"
+        >
+          <b>NOTA:</b> Los símbolos se guardan en mayúsculas y el nombre de las
+          direcciones solo puede ser un elemento del conjunto
+          <code>{R, L, N, r, l, n}</code>. (Ejemplo: <b>R</b> = Derecha,
+          <b>r</b> = derecha en minusculas).
+        </div>
+        <div
+          class="mt-4 p-4 bg-yellow-50 border-l-4 border-yellow-500 text-yellow-900"
+        >
+          <b>NOTA:</b> Si el usuario no especifica el estado inicial, se asume
+          que es el primero que ingresa.
+        </div>
+        <div
+          class="mt-4 p-4 bg-yellow-50 border-l-4 border-yellow-500 text-yellow-900"
+        >
+          <b>NOTA:</b> Los simbolos tienen maximo una longitud de 1.
+        </div>
+        <div
+          class="mt-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900"
+        >
+          <b>NOTA:</b> El estado inicial tiene un color amarillo
+        </div>
+        <div class="mt-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-900">
+          <b>NOTA:</b> El estado de rechazo tiene un color rojo
+        </div>
+        <div
+          class="mt-4 p-4 bg-green-100 border-l-4 border-green-500 text-green-900"
+        >
+          <b>NOTA:</b> El estado de aceptacion tiene un color verde
+        </div>
+
+        <!-- Sección de matriz -->
+        <h2 class="text-3xl text-center text-blue-900 font-bold mt-10 mb-8">
+          MATRIZ DE ADYACENCIA PARA LAS TRANSICIONES
+        </h2>
+        <div class="flex justify-center">
+          <img
+            src="/client/img/matriz_doc.png"
+            alt="Matriz de transiciones"
+            class="w-1/2 max-w-3xl border-2 border-blue-300 rounded-md"
+          />
+        </div>
+
+        <!-- Ejecución del ejemplo -->
+        <h2 class="text-3xl text-center text-blue-900 font-bold mt-10 mb-8">
+          EJECUCIÓN DEL EJEMPLO ANTERIOR
+        </h2>
+        <div class="flex flex-row justify-around text-lg">
+          <div class="flex flex-col items-center">
+            <b>Cinta inicial:</b>
+            <p class="bg-gray-200 text-xl p-2 rounded-md shadow">10101010</p>
+          </div>
+          <div class="flex flex-col items-center">
+            <b>Cinta final:</b>
+            <p class="bg-gray-200 text-xl p-2 rounded-md shadow">32323232</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="node_modules/cytoscape/dist/cytoscape.min.js"></script>
+    <script type="module">
+      import { inicializarGrafo } from "/client/cytoscape/paint.js";
+      inicializarGrafo();
+    </script>
+    <script type="module">
+      import {
+        setTransicionesAPI,
+        reiniciarAPI,
+        setCintaAPI,
+        getEstadosAPI,
+        getCintaAPI,
+        avanzarCintaAPI,
+        setEstadoRechazoAPI,
+        setEstadoAceptacionAPI,
+        setEstadoInicialAPI,
+      } from "/client/js/connection.js";
+      window.setTransiciones = function setTransiciones() {
+        const value = document.getElementById("transiciones").value;
+        if (value == "") {
+          alert("No se ha ingresado ninguna transicion");
+        } else {
+          setTransicionesAPI(value).then(() => {
+            location.reload();
+          });
+        }
+      };
+
+      window.reiniciar = function reiniciar() {
+        reiniciarAPI().then(() => {
+          location.reload();
+        });
+      };
+
+      window.setAceptado = function setAceptado() {
+        const value = document.getElementById("aceptado").value || "";
+        if (value !== "") {
+          setEstadoAceptacionAPI(value).then(() => {
+            location.reload();
+          });
+        }
+      };
+
+      window.setRechazado = function setRechazado() {
+        const value = document.getElementById("rechazo").value || "";
+        if (value !== "") {
+          setEstadoRechazoAPI(value).then(() => {
+            location.reload();
+          });
+        }
+      };
+
+      window.setInicial = function setInicial() {
+        const value = document.getElementById("inicial").value || "";
+        if (value !== "") {
+          setEstadoInicialAPI(value).then(() => {
+            location.reload();
+          });
+        }
+      };
+
+      window.setCinta = function setCinta() {
+        const cintaValue = document.getElementById("cadena").value || "";
+        if (cintaValue !== "") {
+          setCintaAPI(cintaValue).then(() => {
+            location.reload();
+          });
+        }
+      };
+    </script>
+    <script type="module" src="./js/index.js"></script>
+  </body>
+</html>
